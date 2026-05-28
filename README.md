@@ -23,6 +23,9 @@ skills/
 ├── sync-i18n/               # 多语言词条同步
 ├── generate-efficiency-record/  # 生成提效跟踪记录
 └── sync-efficiency-summary/     # 同步提效总表
+
+guides/
+└── codex-figma-pat-setup.md # Codex API Key 模式下通过 PAT 读取 Figma
 ```
 
 ## 快速上手
