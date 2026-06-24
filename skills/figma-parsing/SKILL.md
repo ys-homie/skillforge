@@ -10,6 +10,51 @@ metadata:
 ## 触发条件
 需求拆解完成后，有 Figma 链接需要解析。
 
+## Figma 获取方式
+
+### 首选：Figma MCP / Plugins OAuth
+
+- ChatGPT 账号登录 Codex 时，优先使用 Figma MCP / Plugins OAuth 获取设计稿。
+- 必须先获取结构化设计信息，再获取截图；节点过大或返回被截断时，先获取元数据定位子节点，再重新获取精确节点。
+- 实现过程中 UI 细节不确定时，继续通过 Figma MCP 回查，避免凭截图猜测。
+
+### 兜底：Figma PAT + REST API
+
+当 API Key 登录导致 Plugins / Figma OAuth 不可用，或 Figma MCP 受限时，使用 Figma Personal Access Token 兜底读取设计稿。
+
+**Token 配置：**
+- Token 必须存放在环境变量 `FIGMA_ACCESS_TOKEN` 中，不要写进聊天、代码、文档示例的真实值或 Git 仓库。
+- 本地持久化建议写入 `~/.zshrc` 或 `~/.zshrc.local`，例如：`export FIGMA_ACCESS_TOKEN="<your_token>"`。
+- 如果 Token 泄露，立即到 Figma Settings → Security → Personal access tokens 中 revoke。
+
+**Figma URL 解析：**
+
+```text
+https://www.figma.com/design/<FILE_KEY>/...?node-id=<NODE_ID>
+```
+
+- `FILE_KEY`：`/design/` 后面的文件 key，例如 `PlLSwQiTA4fRvlTYC5tUQs`
+- `NODE_ID`：`node-id=` 后面的节点 ID，例如 `17773:18537`
+
+**REST API 请求：**
+
+```bash
+# 获取节点 JSON
+curl -H "X-Figma-Token: $FIGMA_ACCESS_TOKEN" \
+  "https://api.figma.com/v1/files/<FILE_KEY>/nodes?ids=<NODE_ID>"
+
+# 获取节点截图 URL
+curl -H "X-Figma-Token: $FIGMA_ACCESS_TOKEN" \
+  "https://api.figma.com/v1/images/<FILE_KEY>?ids=<NODE_ID>&format=png&scale=2"
+```
+
+**Codex 执行规则：**
+1. 从环境变量读取 `FIGMA_ACCESS_TOKEN`，禁止输出真实 Token。
+2. 通过 `files/<FILE_KEY>/nodes?ids=<NODE_ID>` 获取节点 JSON。
+3. 通过 `images/<FILE_KEY>?ids=<NODE_ID>&format=png&scale=2` 获取截图 URL；如需下载截图，仅保存到临时目录或任务相关资源目录。
+4. 结合节点 JSON、截图、项目字体资源、项目颜色资源输出 UI 结构、字体、颜色、切图清单和交互说明。
+5. 网络请求需要授权时，说明用途是「调用 Figma REST API 读取设计稿节点和截图」。
+
 ## 输出模板
 
 ```markdown
@@ -59,9 +104,9 @@ metadata:
 
 ## Figma MCP 不可用时
 
-1. 告知负责人："Figma MCP 受限，建议切换到 Codex 处理，或提供设计稿截图"
-2. 如提供截图，基于截图继续完成分析
-3. 如选择切换工具，无需输出额外内容
+1. 优先检查是否已配置 `FIGMA_ACCESS_TOKEN`，如已配置则走 PAT + REST API 兜底方案。
+2. 如果没有 Token 或 REST API 也受限，告知负责人："Figma MCP 受限，且未检测到可用的 FIGMA_ACCESS_TOKEN，建议提供设计稿截图或先配置 Figma PAT"
+3. 如提供截图，基于截图继续完成分析。
 
 ## 解析优先级
 
