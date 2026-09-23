@@ -2,7 +2,7 @@
 
 GitHub 仓库：[ys-homie/skillforge](https://github.com/ys-homie/skillforge)。项目内的 `doc/ys/shared-skills` 是内容副本，更新后需同步到此仓库。
 
-> Modular AI agent skill templates for mobile dev workflows — from requirement analysis to code implementation.
+> Modular AI workflow skills for mobile development — from requirement analysis and Figma parsing to plans, analytics, implementation, validation, and delivery.
 
 模块化的 AI Agent 技能模板，覆盖需求拆解 → Figma 解析 → Plan → 代码实现全流程。  
 适用于 Cursor / Codex / Claude Code 或任何 LLM 驱动的编码助手。
