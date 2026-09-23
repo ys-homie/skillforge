@@ -1,5 +1,7 @@
 # SkillForge
 
+GitHub 仓库：[ys-homie/skillforge](https://github.com/ys-homie/skillforge)。项目内的 `doc/ys/shared-skills` 是内容副本，更新后需同步到此仓库。
+
 > Modular AI agent skill templates for mobile dev workflows — from requirement analysis to code implementation.
 
 模块化的 AI Agent 技能模板，覆盖需求拆解 → Figma 解析 → Plan → 代码实现全流程。  
@@ -19,6 +21,7 @@ skills/
 ├── figma-parsing/           # Figma 设计稿解析
 ├── generate-plan/           # 生成实现 Plan
 ├── code-implementation/     # 按 Plan 代码实现
+├── analytics/              # 埋点对比、风险分析、开发与 Check
 ├── bugfix/                  # Bug 修复（轻量流程）
 ├── sync-i18n/               # 多语言词条同步
 ├── generate-efficiency-record/  # 生成提效跟踪记录
@@ -77,6 +80,7 @@ cp -r skills/ your-project/.agents/skills/
 | `figma-parsing` | 有 Figma 链接 | UI 结构 + 字体/颜色映射 + 切图清单 |
 | `generate-plan` | 需求 + Figma 解析完成 | 结构化实现 Plan（含复杂度评估） |
 | `code-implementation` | Plan 经人工确认 | 代码 + 变更文件清单 + 自检清单 |
+| `analytics` | 新增、补齐、对齐、检查埋点或次数异常 | 属性对比与风险文档 + 埋点实现 + Check 文档及页面参数汇总 |
 | `bugfix` | Bug / 异常 / 报错 | 定位 + 修复 + 影响范围 + 回归验证 |
 
 ### 收尾阶段
@@ -98,6 +102,7 @@ cp -r skills/ your-project/.agents/skills/
            ⑥ generate-efficiency-record（可选）
            ⑦ sync-efficiency-summary（可选）
 
+埋点 ──→ analytics（对比与风险 → 开发 → Check；仅检查时不改代码）
 Bug ──→ bugfix（轻量流程，不走 Plan）
 小改动 ──→ 直接实现（不走 Plan）
 ```
@@ -119,6 +124,8 @@ Bug ──→ bugfix（轻量流程，不走 Plan）
 4. **Plan 必须人工确认** — Step 3 → Step 4 是硬卡点
 5. **Figma 链接全程保留** — UI 还原度验证的基础
 6. **约束行为先于设计尺寸** — 主体布局默认自适应；只有图标、插画、小按钮等局部元素按依据固定宽高，并区分外层交互区域与内部视觉尺寸
+7. **默认不提交代码** — AI 保留工作区改动并记录验收基线；只有负责人明确要求时才执行 Git 提交
+8. **任务文档不进入待提交变更** — Plan、风险/Check 文档和截图日志默认保存到仓库外任务目录，保留可点击链接；正式应用资源仍按项目规则管理
 
 ## 兼容工具
 
